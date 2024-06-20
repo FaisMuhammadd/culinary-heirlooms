@@ -8,7 +8,7 @@ import orderRouter from "./routes/orderRoute.js";
 
 // app config
 const app = express();
-const port = "https://culinary-heirlooms-backend.vercel.app/";
+const port = 4000;
 
 // midleware
 app.use(express.json());
