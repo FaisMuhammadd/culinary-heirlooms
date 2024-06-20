@@ -1,6 +1,5 @@
 {
    "version": 2,
-   "named": "culinary-heirlooms-backend",
    "builds": [
       {
          "src": "server.js",
