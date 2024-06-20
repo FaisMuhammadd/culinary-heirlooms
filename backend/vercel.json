@@ -1,6 +1,6 @@
 {
    "version": 1,
-   "named": "socketing",
+   "named": "backend",
    "builds": [
       {
          "src": "server.js",
