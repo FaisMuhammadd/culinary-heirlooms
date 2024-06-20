@@ -8,7 +8,7 @@ import orderRouter from "./routes/orderRoute.js";
 
 // app config
 const app = express();
-const port = "https://culinary-heirlooms-backend.vercel.app/";
+// const port = 4000;
 
 // midleware
 app.use(express.json());
@@ -28,6 +28,8 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
-app.listen(port, () => {
-  console.log(`Server Started on localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server Started on localhost:${port}`);
+// });
+
+export default app;
