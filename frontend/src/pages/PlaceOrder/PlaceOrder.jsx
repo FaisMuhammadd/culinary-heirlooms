@@ -1,6 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url } =
@@ -36,8 +38,31 @@ const PlaceOrder = () => {
         orderItems.push(itemInfo);
       }
     });
-    console.log(orderItems);
+    let orderData = {
+      address: data,
+      items: orderItems,
+      amount: getTotalCartAmount() + 2,
+    };
+    let response = await axios.post(url + "/api/order/place", orderData, {
+      headers: { token },
+    });
+    if (response.data.success) {
+      const { session_url } = response.data;
+      window.location.replace(session_url);
+    } else {
+      alert("Error place order");
+    }
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/cart");
+    } else if (getTotalCartAmount() === 0) {
+      navigate("/cart");
+    }
+  }, [token]);
 
   return (
     <form onSubmit={placeOrder} className="place-order">
@@ -50,6 +75,7 @@ const PlaceOrder = () => {
             value={data.firstName}
             type="text"
             placeholder="First name"
+            required
           />
           <input
             name="lastName"
@@ -57,6 +83,7 @@ const PlaceOrder = () => {
             value={data.lastName}
             type="text"
             placeholder="Last name"
+            required
           />
         </div>
         <input
@@ -65,6 +92,7 @@ const PlaceOrder = () => {
           value={data.email}
           type="email"
           placeholder="Email address"
+          required
         />
         <input
           name="street"
@@ -72,6 +100,7 @@ const PlaceOrder = () => {
           value={data.street}
           type="text"
           placeholder="Street"
+          required
         />
         <div className="multi-fields">
           <input
@@ -80,6 +109,7 @@ const PlaceOrder = () => {
             value={data.city}
             type="text"
             placeholder="City"
+            required
           />
           <input
             name="state"
@@ -87,6 +117,7 @@ const PlaceOrder = () => {
             value={data.state}
             type="text"
             placeholder="State"
+            required
           />
         </div>
         <div className="multi-fields">
@@ -96,8 +127,16 @@ const PlaceOrder = () => {
             value={data.zipcode}
             type="text"
             placeholder="Zip code"
+            required
           />
-          <input type="text" placeholder="Country" />
+          <input
+            type="country"
+            placeholder="Country"
+            name="country"
+            onChange={onChangeHandler}
+            value={data.country}
+            required
+          />
         </div>
         <input
           name="phone"
@@ -105,6 +144,7 @@ const PlaceOrder = () => {
           value={data.phone}
           type="text"
           placeholder="Phone"
+          required
         />
       </div>
       <div className="place-order-right">
