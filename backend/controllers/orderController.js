@@ -44,14 +44,41 @@ const placeOrder = async (req, res) => {
       line_items: line_items,
       mode: "payment",
       success_url: `${url_fronend}/verify?success=true&orderId=${newOrder._id}`,
-      cencel_url: `${url_fronend}/verify?success=false&orderId=${newOrder._id}`,
+      cancel_url: `${url_fronend}/verify?success=false&orderId=${newOrder._id}`,
     });
 
-    res.json({ success: true, success_url: session.url });
+    res.json({ success: true, session_url: session.url });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Error PlaceOrder" });
   }
 };
 
-export { placeOrder };
+const verifyOrder = async (req, res) => {
+  const { orderId, success } = req.body;
+  try {
+    if (success == "true") {
+      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      res.json({ success: true, message: "Paid" });
+    } else {
+      await orderModel.findByIdAndDelete(orderId);
+      res.json({ success: false, message: "Not paid" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error Verivy Order" });
+  }
+};
+
+// user orders for frontend
+const userOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ userId: req.body.userId });
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error userOrders" });
+  }
+};
+
+export { placeOrder, verifyOrder, userOrders };
